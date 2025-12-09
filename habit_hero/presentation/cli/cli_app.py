@@ -7,6 +7,10 @@ from habit_hero.application.use_cases.complete_habit import (
     CompleteHabitUseCase,
     CompleteHabitRequest,
 )
+from habit_hero.application.use_cases.list_habits import (
+    ListHabitsUseCase,
+    ListHabitsRequest,
+)
 from habit_hero.infrastructure.persistence.in_memory_repositories import (
     InMemoryUserRepository,
     InMemoryCharacterRepository,
@@ -14,6 +18,8 @@ from habit_hero.infrastructure.persistence.in_memory_repositories import (
     InMemoryHabitLogRepository,
     InMemoryStreakRepository,
 )
+
+
 
 
 def run_demo() -> None:
@@ -67,6 +73,8 @@ def run_demo() -> None:
         characters=character_repo,
     )
 
+    list_habits = ListHabitsUseCase(habits=habit_repo)
+
     # 6. Execute the use case once (simulate completing the habit today)
     today = date.today()
     request = CompleteHabitRequest(
@@ -76,11 +84,16 @@ def run_demo() -> None:
     )
     complete_habit.execute(request)
 
-    # 7. Read back the updated state
+    # 7. List all habits for this user
+    habit_list = list_habits.execute(
+        ListHabitsRequest(user_id=user.id)
+    )
+
+    # 8. Read back the updated state
     updated_character = character_repo.get_for_user(user.id)
     streak = streak_repo.get(user.id, habit.id)
 
-    # 8. Print results to the console
+    # 9. Print results to the console
     print("=== Habit Hero Demo: Complete Habit Once ===")
     print(f"User: {user.id}")
     print(f"Habit: {habit.name}")
@@ -96,3 +109,7 @@ def run_demo() -> None:
             f"Current streak: {streak.current_streak} day(s) | "
             f"Longest streak: {streak.longest_streak} day(s)"
         )
+
+    print("\nAll habits for this user:")
+    for h in habit_list:
+        print(f"- {h.name} (XP: {h.base_xp}, Active: {h.active})")
