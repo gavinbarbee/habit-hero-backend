@@ -2,10 +2,14 @@ from __future__ import annotations
 
 from datetime import datetime, date
 
-from habit_hero.domain.entities import User, Character, Habit
+from habit_hero.domain.entities import User, Character
 from habit_hero.application.use_cases.complete_habit import (
     CompleteHabitUseCase,
     CompleteHabitRequest,
+)
+from habit_hero.application.use_cases.create_habit import (
+    CreateHabitUseCase,
+    CreateHabitRequest,
 )
 from habit_hero.application.use_cases.list_habits import (
     ListHabitsUseCase,
@@ -49,21 +53,19 @@ def run_demo() -> None:
     character = Character(user_id=user.id)
     character_repo.save(character)
 
-    # 4. Create one habit and save it
-    habit = Habit(
-        id="habit-1",
-        user_id=user.id,
-        name="Morning training",
-        cue="After I wake up",
-        action="Lift weights for 45 minutes",
-        reward="Feel strong and clear for the day",
-        estimated_minutes=45,
-        base_xp=10,
-        is_bad_habit=False,
-        replaces_habit_id=None,
-        active=True,
+    # 4. Create one habit via the use case
+    create_habit = CreateHabitUseCase(habits=habit_repo)
+    habit = create_habit.execute(
+        CreateHabitRequest(
+            user_id=user.id,
+            name="Morning training",
+            cue="After I wake up",
+            action="Lift weights for 45 minutes",
+            reward="Feel strong and clear for the day",
+            estimated_minutes=45,
+            base_xp=10,
+        )
     )
-    habit_repo.save(habit)
 
     # 5. Wire up the use case
     complete_habit = CompleteHabitUseCase(
@@ -72,7 +74,6 @@ def run_demo() -> None:
         streaks=streak_repo,
         characters=character_repo,
     )
-
     list_habits = ListHabitsUseCase(habits=habit_repo)
 
     # 6. Execute the use case once (simulate completing the habit today)
