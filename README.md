@@ -58,5 +58,26 @@ This repository is public as a learning artifact and an evolving system.
 ## Quick start
 
 ### 1) Install dependencies
-```bash
-pip install -r requirements.txt
+
+    pip install -r requirements.txt
+
+### 2) Run the demo
+
+    python main.py
+
+Example output:
+
+    === Habit Hero Demo: Complete Habit Once ===
+    User: user-...
+    Habit: Morning training
+    Character Level: 1 | XP: 35/100
+    Current streak: 1 day(s) | Longest streak: 1 day(s)
+
+    Life Force logged for today: exercise=3, diet=2, XP awarded=25
+
+    All habits for this user:
+    - Morning training (XP: 10, Active: True)
+
+### 3) Run tests
+
+    pytest
