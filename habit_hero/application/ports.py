@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from datetime import date
-from typing import List, Optional
+from typing import List, Optional, Protocol
+from typing_extensions import runtime_checkable
 
 from habit_hero.domain.entities import (
     User,
@@ -10,9 +11,9 @@ from habit_hero.domain.entities import (
     Habit,
     HabitLog,
     StreakState,
-    FocusSession,
     LifeForceCheck,
 )
+
 
 class UserRepository(ABC):
     @abstractmethod
@@ -67,22 +68,8 @@ class StreakRepository(ABC):
     def save(self, streak: StreakState) -> None:
         ...
 
+@runtime_checkable
+class LifeForceRepository(Protocol):
+    def save(self, check: LifeForceCheck) -> None: ...
+    def get_for_day(self, user_id: str, day: date) -> Optional[LifeForceCheck]: ...
 
-class FocusSessionRepository(ABC):
-    @abstractmethod
-    def get(self, session_id: str) -> Optional[FocusSession]:
-        ...
-
-    @abstractmethod
-    def save(self, session: FocusSession) -> None:
-        ...
-
-
-class LifeForceRepository(ABC):
-    @abstractmethod
-    def get_for_day(self, user_id: str, day: date) -> Optional[LifeForceCheck]:
-        ...
-
-    @abstractmethod
-    def save(self, check: LifeForceCheck) -> None:
-        ...

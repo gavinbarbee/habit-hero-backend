@@ -1,26 +1,62 @@
-# Habit Hero — Backend
+# Habit Hero — Backend (Version 0)
 
-This is the backend project I'm building to learn real software engineering,
-clean architecture, and backend fundamentals using Python.
+This repository contains the backend foundation for **Habit Hero**, an early-stage habit and identity-building application.
 
-Right now it's a simple foundation with:
+**Version 0 goal:** ship a minimal, working backend that demonstrates the core loop:  
+**create user → create habit → complete habit → receive XP/streak feedback → log LifeForce → see progression**.
 
-## What’s built so far
-- Clean architecture structure (domain, application, infrastructure, presentation)
-- User, Character, Habit, Streak, and HabitLog models
-- In-memory repositories (safe storage for now, no database yet)
-- A real use case: completing a habit
-  - Updates streak
-  - Gives XP
-  - Saves a habit log
-- Small CLI demo (`python main.py`)
+This version prioritizes clarity and correctness over polish, scale, or completeness.
 
-## Why I’m building this
-To learn backend engineering properly:
-- real project structure
-- clean code organization
-- use cases
-- domain logic
-- eventually deploying a real service
+---
 
-This project will grow over time as I learn more and expand it.
+## What this project is
+
+- A **Python backend** built using **clean architecture principles**
+- Focused on **domain logic**, **use cases**, and **testability**
+- Designed as a foundation that can later support:
+  - an API (e.g., FastAPI)
+  - a database (e.g., SQLite/Postgres)
+  - AI-assisted onboarding (server-side, no keys in clients)
+  - a frontend or mobile app
+
+This repository is public as a learning artifact and an evolving system.
+
+---
+
+## Core features implemented (Version 0)
+
+### Architecture
+- `domain` — core entities and business rules  
+- `application` — use cases + ports (interfaces)  
+- `infrastructure` — in-memory persistence implementations  
+- `presentation` — a simple CLI demo  
+
+### Domain models
+- **User**
+- **Character** (XP + level progression)
+- **Habit**
+- **Streak tracking**
+- **Habit logs**
+- **LifeForce** (daily exercise + diet alignment)
+
+### Use cases
+- Create user (automatically creates a character)
+- Create habit
+- Complete habit (XP + streak updates + log entry)
+- List habits for a user
+- Log LifeForce (exercise + diet) and award XP
+
+### Testing
+- Unit tests covering:
+  - streak logic
+  - XP calculation
+  - character leveling
+  - LifeForce logging
+
+---
+
+## Quick start
+
+### 1) Install dependencies
+```bash
+pip install -r requirements.txt

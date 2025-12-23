@@ -1,11 +1,14 @@
 from __future__ import annotations
 
-from datetime import datetime, date
+from datetime import date
 
-from habit_hero.domain.entities import User, Character
 from habit_hero.application.use_cases.complete_habit import (
     CompleteHabitUseCase,
     CompleteHabitRequest,
+)
+from habit_hero.application.use_cases.create_user import (
+    CreateUserUseCase,
+    CreateUserRequest,
 )
 from habit_hero.application.use_cases.create_habit import (
     CreateHabitUseCase,
@@ -21,9 +24,13 @@ from habit_hero.infrastructure.persistence.in_memory_repositories import (
     InMemoryHabitRepository,
     InMemoryHabitLogRepository,
     InMemoryStreakRepository,
+    InMemoryLifeForceRepository,
 )
 
-
+from habit_hero.application.use_cases.log_life_force import (
+    LogLifeForceUseCase,
+    LogLifeForceRequest,
+)
 
 
 def run_demo() -> None:
@@ -40,18 +47,27 @@ def run_demo() -> None:
     habit_repo = InMemoryHabitRepository()
     log_repo = InMemoryHabitLogRepository()
     streak_repo = InMemoryStreakRepository()
+    life_force_repo = InMemoryLifeForceRepository()
 
-    # 2. Create a user and save it
-    user = User(
-        id="user-1",
-        long_term_vision="Become the strongest, clearest version of myself.",
-        created_at=datetime.utcnow(),
+
+    # 2–3. Create a user and starting character via the use case
+    create_user = CreateUserUseCase(
+        users=user_repo,
+        characters=character_repo,
     )
-    user_repo.save(user)
+    create_user_response = create_user.execute(
+        CreateUserRequest(
+            long_term_vision="Become the strongest, clearest version of myself.",
+        )
+    )
 
-    # 3. Create a character for that user
-    character = Character(user_id=user.id)
-    character_repo.save(character)
+    user = create_user_response.user
+    character = create_user_response.character
+    log_life_force = LogLifeForceUseCase(
+    life_force=life_force_repo,
+    characters=character_repo,
+)
+
 
     # 4. Create one habit via the use case
     create_habit = CreateHabitUseCase(habits=habit_repo)
@@ -84,6 +100,15 @@ def run_demo() -> None:
         day=today,
     )
     complete_habit.execute(request)
+    lf_result = log_life_force.execute(
+    LogLifeForceRequest(
+        user_id=user.id,
+        day=today,
+        exercise_score=3,
+        diet_score=2,
+    )
+)
+
 
     # 7. List all habits for this user
     habit_list = list_habits.execute(
@@ -110,6 +135,13 @@ def run_demo() -> None:
             f"Current streak: {streak.current_streak} day(s) | "
             f"Longest streak: {streak.longest_streak} day(s)"
         )
+
+    print(
+    f"\nLife Force logged for today: "
+    f"exercise={lf_result.life_force_check.exercise_score}, "
+    f"diet={lf_result.life_force_check.diet_score}, "
+    f"XP awarded={lf_result.xp_awarded}"
+)
 
     print("\nAll habits for this user:")
     for h in habit_list:

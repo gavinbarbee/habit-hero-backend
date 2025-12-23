@@ -93,15 +93,12 @@ class FocusSession:
 @dataclass
 class LifeForceCheck:
     """
-    A quick daily check-in for health alignment:
-    - Exercise
-    - Protein / fats / carbs
-    Scores are simple (0,1,2) for now.
+    A lightweight daily alignment check for exercise and diet.
+    - exercise_score: 0–3 (how well you trained / moved)
+    - diet_score: 0–3 (how well you ate that day)
     """
     id: str
     user_id: str
     day: date
     exercise_score: int
-    protein_score: int
-    fats_score: int
-    carbs_score: int
+    diet_score: int

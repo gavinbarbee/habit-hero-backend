@@ -3,14 +3,22 @@ from __future__ import annotations
 from datetime import date
 from typing import Dict, Optional
 
+from habit_hero.domain.entities import (
+    User,
+    Character,
+    Habit,
+    HabitLog,
+    StreakState,
+    LifeForceCheck,
+)
 from habit_hero.application.ports import (
     UserRepository,
     CharacterRepository,
     HabitRepository,
     HabitLogRepository,
     StreakRepository,
+    LifeForceRepository,
 )
-from habit_hero.domain.entities import User, Character, Habit, HabitLog, StreakState
 
 
 class InMemoryUserRepository(UserRepository):
@@ -112,4 +120,15 @@ class InMemoryStreakRepository(StreakRepository):
     def save(self, streak: StreakState) -> None:
         key = self._key(streak.user_id, streak.habit_id)
         self._streaks[key] = streak
+class InMemoryLifeForceRepository(LifeForceRepository):
+    def __init__(self) -> None:
+        # key: (user_id, day)
+        self._storage: Dict[tuple[str, date], LifeForceCheck] = {}
+
+    def save(self, check: LifeForceCheck) -> None:
+        key = (check.user_id, check.day)
+        self._storage[key] = check
+
+    def get_for_day(self, user_id: str, day: date) -> Optional[LifeForceCheck]:
+        return self._storage.get((user_id, day))
 
